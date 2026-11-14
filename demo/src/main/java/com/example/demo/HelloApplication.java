@@ -81,7 +81,7 @@ public class HelloApplication extends Application {
         });
 
         scene.setOnMousePressed(event -> {
-            controller.verifyHitboxes(new Point2D(event.getX(), event.getY()));
+            controller.verifyHitboxes(new Point2D(event.getX(), event.getY()), bgContext);
         });
 
         stage.setTitle("PlaceHolder");

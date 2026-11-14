@@ -28,17 +28,14 @@ public class GameController {
     public void drawGrid(GraphicsContext context) {
         for (int y = 0; y < grid.length; y++) {
             for (int x = 0; x < grid[y].length; x++) {
+                System.out.println(x+" "+y);
                 context.setStroke(Color.BLACK);
                 context.strokeRect(LENcases*x+ ORIGIN.getX(), LENcases*y+ ORIGIN.getY(), LENcases, LENcases);
-                if (grid[y][x] == caseType.FIREWALL.getIndex()) {
-                    tools[0].draw(context, new Point2D(x*LENcases+ORIGIN.getX(), y*LENcases+ORIGIN.getY()));
-                    System.out.println("SUCCESS");
-                }
             }
         }
     }
 
-    public void verifyHitboxes(Point2D mousePos) {
+    public void verifyHitboxes(Point2D mousePos, GraphicsContext context) {
         if (picking == caseType.EMPTY) {
             if (mousePos.getX() > SCREEN_WIDTH - 80 - 20 && mousePos.getX() < SCREEN_WIDTH - 20) {
                 if (mousePos.getY() > 20 && mousePos.getY() < 80 + 20) {
@@ -56,7 +53,7 @@ public class GameController {
 
                     grid[row][col] = picking.getIndex();
                     picking = caseType.EMPTY;
-                    System.out.println(grid);
+                    tools[0].draw(context, new Point2D(col*LENcases+ORIGIN.getX(), row*LENcases+ORIGIN.getY()));
                 }
             }
         }
