@@ -15,8 +15,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import java.io.IOException;
+import javafx.scene.Parent;
+import javafx.fxml.FXMLLoader;
 import java.util.Random;
 
 public class HelloApplication extends Application {
@@ -28,7 +29,8 @@ public class HelloApplication extends Application {
     public static final double moneyGeneratorPerSecond = 3*FPS;
 
     public Pane pane = new Pane();
-    public Scene scene = new Scene(pane, SCREEN_WIDTH, SCREEN_HEIGHT);
+    public static Scene scene;
+
     public Canvas bgCanvas = new Canvas(LEVEL_WIDTH, LEVEL_HEIGHT);
     public GraphicsContext bgContext = bgCanvas.getGraphicsContext2D();
     public Canvas GUICanvas = new Canvas(LEVEL_WIDTH, LEVEL_HEIGHT);
@@ -43,9 +45,13 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/home.fxml"));
+
+        scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
+       // addAll();
         loadNewScreen(currentPlan);
 
-        AnimationTimer timer = new AnimationTimer() {
+       /* AnimationTimer timer = new AnimationTimer() {
             long lastTime = System.nanoTime();
 
             @Override
@@ -62,7 +68,7 @@ public class HelloApplication extends Application {
 
                 lastTime = now;
             }
-        };
+        };*/
         timer.start();
 
         scene.setOnKeyPressed(event -> {
@@ -78,6 +84,10 @@ public class HelloApplication extends Application {
                     //PAUSE LOGIC
                 }
             }
+        });
+
+        scene.setOnMousePressed(event -> {
+
         });
 
         stage.setTitle("PlaceHolder");
@@ -124,6 +134,11 @@ public class HelloApplication extends Application {
                 bgContext.strokeRect(LENcases*x+ ORIGIN.getX(), LENcases*y+ ORIGIN.getY(), LENcases, LENcases);
             }
         }
+    }
+
+    static void setRoot(String fxml) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/fxml/" + fxml + ".fxml"));
+        scene.setRoot(fxmlLoader.load());
     }
 
     public void createRandomInfectedCell() {
