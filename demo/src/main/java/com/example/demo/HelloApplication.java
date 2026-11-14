@@ -54,9 +54,8 @@ public class HelloApplication extends Application {
 
                     if (time > indexTime * FPS) {
                         indexTime++;
-                        controller.nextTick();
+                        controller.nextTick(bgContext);
                         loadGUI();
-                        Virus.createRandomInfectedCell(bgContext);
                     }
                 }
 

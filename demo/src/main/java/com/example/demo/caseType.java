@@ -3,6 +3,8 @@ package com.example.demo;
 public enum caseType {
     EMPTY(0),
     VIRUS(-1),
+    BOURGEON(-2),
+    ESTABLISHED(-3),
     FIREWALL(1);
 
     public int index;
