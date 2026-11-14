@@ -3,12 +3,14 @@ package com.example.demo;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -98,18 +100,24 @@ public class HelloApplication extends Application {
     }
 
     public void addAccueil() {
-        VBox vBox = new VBox();
+        HBox hBox = new HBox();
+        hBox.setPrefSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+        hBox.setAlignment(Pos.CENTER);
+            VBox vBox = new VBox(15);
+            vBox.setPrefSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+            vBox.setAlignment(Pos.CENTER);
 
-        ImageView virus = new ImageView(new Image("virus.png"));
-        virus.setPreserveRatio(true);
-        virus.setFitHeight(50);
-        vBox.getChildren().add(virus);
+            ImageView virus = new ImageView(new Image("virus.png"));
+            virus.setPreserveRatio(true);
+            virus.setFitHeight(200);
+            vBox.getChildren().add(virus);
 
-        Button btnPlay = new Button("Jouer !");
-        vBox.getChildren().add(btnPlay);
-        btnPlay.setOnAction(event -> {loadNewScreen(Plan.GAMEPLAY);});
+            Button btnPlay = new Button("Jouer !");
+            vBox.getChildren().add(btnPlay);
+            btnPlay.setOnAction(event -> {loadNewScreen(Plan.GAMEPLAY);});
 
-        pane.getChildren().add(vBox);
+        hBox.getChildren().add(vBox);
+        pane.getChildren().add(hBox);
     }
 
     public void addGameplay() {
