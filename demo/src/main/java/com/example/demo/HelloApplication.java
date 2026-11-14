@@ -10,23 +10,28 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
 import java.io.IOException;
+import javafx.scene.Parent;
+import javafx.fxml.FXMLLoader;
 
 public class HelloApplication extends Application {
     public static final double SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
     public static final double LEVEL_WIDTH = SCREEN_WIDTH, LEVEL_HEIGHT = SCREEN_HEIGHT;
 
     public Pane pane = new Pane();
-    public Scene scene = new Scene(pane, SCREEN_WIDTH, SCREEN_HEIGHT);
+    public static Scene scene;
+
     public Canvas bgCanvas = new Canvas(LEVEL_WIDTH, LEVEL_HEIGHT);
     public GraphicsContext bgContext = bgCanvas.getGraphicsContext2D();
 
     @Override
     public void start(Stage stage) throws IOException {
-        addAll();
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/home.fxml"));
 
-        AnimationTimer timer = new AnimationTimer() {
+        scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
+       // addAll();
+
+       /* AnimationTimer timer = new AnimationTimer() {
             long lastTime = System.nanoTime();
 
             @Override
@@ -34,23 +39,23 @@ public class HelloApplication extends Application {
                 double deltaTemps = (now - lastTime) * 1e-9;
                 lastTime = now;
             }
-        };
-        timer.start();
+        };*/
+        //timer.start();
 
-        scene.setOnKeyPressed(e -> {
+        /*scene.setOnKeyPressed(e -> {
             Input.setKeyPressed(e.getCode(), true);
-        });
+        });*/
 
-        scene.setOnKeyReleased(e -> {
+        /*scene.setOnKeyReleased(e -> {
             Input.setKeyPressed(e.getCode(), false);
-        });
+        });*/
 
         stage.setTitle("PlaceHolder");
         stage.setScene(scene);
         stage.show();
     }
 
-    public void addAll() {
+    /*public void addAll() {
         pane.getChildren().add(bgCanvas);
 
         int[] origin = {200, 100};
@@ -60,5 +65,11 @@ public class HelloApplication extends Application {
                 bgContext.strokeRect(20*x+origin[0], 20*y+origin[1], 20, 20);
             }
         }
+    }
+     */
+
+    static void setRoot(String fxml) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/fxml/" + fxml + ".fxml"));
+        scene.setRoot(fxmlLoader.load());
     }
 }
