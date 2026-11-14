@@ -3,6 +3,7 @@ package com.example.demo;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -22,7 +23,7 @@ public class HelloApplication extends Application {
     public static final double SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
     public static final double LEVEL_WIDTH = SCREEN_WIDTH, LEVEL_HEIGHT = SCREEN_HEIGHT;
     public static final int NBcases = 20, LENcases = 20;
-    public static final int[] ORIGIN = {200, 100};
+    public static final Point2D ORIGIN = new Point2D(200, 100);
     public static final double FPS = 1;
     public static final double moneyGeneratorPerSecond = 3*FPS;
 
@@ -120,7 +121,7 @@ public class HelloApplication extends Application {
         for (int y = 0; y < grid.length; y++) {
             for (int x = 0; x < grid[y].length; x++) {
                 bgContext.setStroke(Color.BLACK);
-                bgContext.strokeRect(LENcases*x+ ORIGIN[0], LENcases*y+ ORIGIN[1], LENcases, LENcases);
+                bgContext.strokeRect(LENcases*x+ ORIGIN.getX(), LENcases*y+ ORIGIN.getY(), LENcases, LENcases);
             }
         }
     }
@@ -129,6 +130,6 @@ public class HelloApplication extends Application {
         int randomIndexX = random.nextInt(NBcases/4, 3*NBcases/4);
         int randomIndexY = random.nextInt(NBcases/4, 3*NBcases/4);
         bgContext.setFill(Color.RED);
-        bgContext.fillRect(LENcases*randomIndexX+ORIGIN[0], LENcases*randomIndexY+ORIGIN[1], LENcases, LENcases);
+        bgContext.fillRect(LENcases*randomIndexX+ORIGIN.getX(), LENcases*randomIndexY+ORIGIN.getY(), LENcases, LENcases);
     }
 }
