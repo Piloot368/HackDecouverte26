@@ -5,7 +5,11 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -28,22 +32,25 @@ public class HelloApplication extends Application {
     public double time = 0;
     public double indexTime = 1;
     public int[][] grid = new int[NBcases][NBcases];
+    public Plan currentPlan = Plan.ACCUEIL;
 
     @Override
     public void start(Stage stage) throws IOException {
-        addAll();
+        loadNewScreen(currentPlan);
 
         AnimationTimer timer = new AnimationTimer() {
             long lastTime = System.nanoTime();
 
             @Override
             public void handle(long now) {
-                double deltaTemps = (now - lastTime) * 1e-9;
-                time += deltaTemps;
+                if (currentPlan == Plan.GAMEPLAY) {
+                    double deltaTemps = (now - lastTime) * 1e-9;
+                    time += deltaTemps;
 
-                if (time > indexTime*FPS) {
-                    indexTime++;
-                    createRandomInfectedCell();
+                    if (time > indexTime * FPS) {
+                        indexTime++;
+                        createRandomInfectedCell();
+                    }
                 }
 
                 lastTime = now;
@@ -51,23 +58,34 @@ public class HelloApplication extends Application {
         };
         timer.start();
 
-        scene.setOnKeyPressed(e -> {
-            Input.setKeyPressed(e.getCode(), true);
-        });
-
-        scene.setOnKeyReleased(e -> {
-            Input.setKeyPressed(e.getCode(), false);
-        });
-
         stage.setTitle("PlaceHolder");
         stage.setScene(scene);
         stage.show();
     }
 
-    public void addAll() {
+    public void loadNewScreen(Plan plan) {
         pane.getChildren().clear();
         pane.getChildren().add(bgCanvas);
-        drawGrid();
+        currentPlan = plan;
+        switch (currentPlan) {
+            case ACCUEIL -> addAccueil();
+            case GAMEPLAY -> drawGrid();
+        }
+    }
+
+    public void addAccueil() {
+        VBox vBox = new VBox();
+
+        ImageView virus = new ImageView(new Image("virus.png"));
+        virus.setPreserveRatio(true);
+        virus.setFitHeight(50);
+        vBox.getChildren().add(virus);
+
+        Button btnPlay = new Button("Jouer !");
+        vBox.getChildren().add(btnPlay);
+        btnPlay.setOnAction(event -> {loadNewScreen(Plan.GAMEPLAY);});
+
+        pane.getChildren().add(vBox);
     }
 
     private void drawGrid() {
