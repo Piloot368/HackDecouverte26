@@ -48,10 +48,9 @@ public class HelloApplication extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/home.fxml"));
 
         scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
-       // addAll();
         loadNewScreen(currentPlan);
 
-       /* AnimationTimer timer = new AnimationTimer() {
+       AnimationTimer timer = new AnimationTimer() {
             long lastTime = System.nanoTime();
 
             @Override
@@ -68,7 +67,7 @@ public class HelloApplication extends Application {
 
                 lastTime = now;
             }
-        };*/
+        };
         timer.start();
 
         scene.setOnKeyPressed(event -> {
