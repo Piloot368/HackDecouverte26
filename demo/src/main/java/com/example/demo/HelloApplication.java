@@ -8,6 +8,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -51,6 +52,13 @@ public class HelloApplication extends Application {
 
     public void addAll() {
         pane.getChildren().add(bgCanvas);
-        bgContext.drawImage(new Image("nuit.png"), 0, 0);
+
+        int[] origin = {200, 100};
+        for (int x = 0; x < 20; x++) {
+            for (int y = 0; y < 20; y++) {
+                bgContext.setStroke(Color.BLACK);
+                bgContext.strokeRect(20*x+origin[0], 20*y+origin[1], 20, 20);
+            }
+        }
     }
 }
