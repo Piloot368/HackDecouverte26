@@ -38,6 +38,7 @@ public class HelloApplication extends Application {
     public double time = 0;
     public double indexTime = 1;
     public int money = 0;
+    public Tools[] tools = {new Firewall()};
     public int[][] grid = new int[NBcases][NBcases];
     public Plan currentPlan = Plan.ACCUEIL;
 
@@ -56,6 +57,8 @@ public class HelloApplication extends Application {
 
                     if (time > indexTime * FPS) {
                         indexTime++;
+                        money += moneyGeneratorPerSecond;
+                        loadGUI();
                         Virus.createRandomInfectedCell(bgContext);
                     }
                 }
@@ -116,11 +119,8 @@ public class HelloApplication extends Application {
     }
 
     public void addGameplay() {
-        GUIContext.setFill(Color.BLACK);
-        GUIContext.setFont(Font.font(12));
-        GUIContext.fillText("money : "+money+"$", 20, 20);
-        drawTools();
         drawGrid();
+        loadGUI();
     }
 
     private void drawGrid() {
@@ -129,6 +129,21 @@ public class HelloApplication extends Application {
                 bgContext.setStroke(Color.BLACK);
                 bgContext.strokeRect(LENcases*x+ ORIGIN.getX(), LENcases*y+ ORIGIN.getY(), LENcases, LENcases);
             }
+        }
+    }
+
+    public void loadGUI() {
+        GUIContext.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        GUIContext.setFill(Color.BLACK);
+        GUIContext.setFont(Font.font(12));
+        GUIContext.fillText("money : "+money+"$", 20, 20);
+        drawTools();
+    }
+
+    public void drawTools() {
+        for (int i = 0; i < tools.length; i++) {
+            GUIContext.drawImage(tools[i].iconImage, 20, 60);
         }
     }
 }

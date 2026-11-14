@@ -12,8 +12,8 @@ public class Virus {
     private int buffer = 4;
 
     public static void createRandomInfectedCell(GraphicsContext context) {
-        int randomIndexX = random.nextInt(4, NBcases);
-        int randomIndexY = random.nextInt(NBcases/4, 3*HelloApplication.NBcases/4);
+        int randomIndexX = random.nextInt(NBcases/4, 3*NBcases/4);
+        int randomIndexY = random.nextInt(NBcases/4, 3*NBcases/4);
         context.setFill(Color.RED);
         context.fillRect(LENcases*randomIndexX+ORIGIN.getX(), LENcases*randomIndexY+ORIGIN.getY(), LENcases, LENcases);
     }
