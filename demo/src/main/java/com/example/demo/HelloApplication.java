@@ -3,7 +3,6 @@ package com.example.demo;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -19,13 +18,11 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Random;
 
+import static com.example.demo.GameController.*;
+
 public class HelloApplication extends Application {
     public static final double SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
     public static final double LEVEL_WIDTH = SCREEN_WIDTH, LEVEL_HEIGHT = SCREEN_HEIGHT;
-    public static final int NBcases = 20, LENcases = 20;
-    public static final Point2D ORIGIN = new Point2D(200, 100);
-    public static final double FPS = 1;
-    public static final double moneyGeneratorPerSecond = 3*FPS;
 
     public Pane pane = new Pane();
     public Scene scene = new Scene(pane, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -33,13 +30,11 @@ public class HelloApplication extends Application {
     public GraphicsContext bgContext = bgCanvas.getGraphicsContext2D();
     public Canvas GUICanvas = new Canvas(LEVEL_WIDTH, LEVEL_HEIGHT);
     public GraphicsContext GUIContext = GUICanvas.getGraphicsContext2D();
+    public GameController controller = new GameController();
     public Random random = new Random();
 
     public double time = 0;
     public double indexTime = 1;
-    public int money = 0;
-    public Tools[] tools = {new Firewall()};
-    public int[][] grid = new int[NBcases][NBcases];
     public Plan currentPlan = Plan.ACCUEIL;
 
     @Override
@@ -57,7 +52,6 @@ public class HelloApplication extends Application {
 
                     if (time > indexTime * FPS) {
                         indexTime++;
-                        money += moneyGeneratorPerSecond;
                         loadGUI();
                         Virus.createRandomInfectedCell(bgContext);
                     }
@@ -119,17 +113,8 @@ public class HelloApplication extends Application {
     }
 
     public void addGameplay() {
-        drawGrid();
+        controller.drawGrid(bgContext);
         loadGUI();
-    }
-
-    private void drawGrid() {
-        for (int y = 0; y < grid.length; y++) {
-            for (int x = 0; x < grid[y].length; x++) {
-                bgContext.setStroke(Color.BLACK);
-                bgContext.strokeRect(LENcases*x+ ORIGIN.getX(), LENcases*y+ ORIGIN.getY(), LENcases, LENcases);
-            }
-        }
     }
 
     public void loadGUI() {
@@ -137,13 +122,13 @@ public class HelloApplication extends Application {
 
         GUIContext.setFill(Color.BLACK);
         GUIContext.setFont(Font.font(12));
-        GUIContext.fillText("money : "+money+"$", 20, 20);
+        GUIContext.fillText("money : "+controller.getMoney()+"$", 20, 20);
         drawTools();
     }
 
     public void drawTools() {
-        for (int i = 0; i < tools.length; i++) {
-            GUIContext.drawImage(tools[i].iconImage, 20, 60);
+        for (int i = 0; i < controller.getTools().length; i++) {
+            GUIContext.drawImage(controller.getTools()[i].iconImage, 20, 60);
         }
     }
 }

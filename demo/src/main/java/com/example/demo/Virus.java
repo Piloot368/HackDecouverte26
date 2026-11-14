@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 
 import java.util.Random;
 
-import static com.example.demo.HelloApplication.*;
+import static com.example.demo.GameController.*;
 
 public class Virus {
     private static Random random = new Random();
