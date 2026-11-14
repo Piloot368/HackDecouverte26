@@ -37,7 +37,7 @@ public class HelloApplication extends Application {
 
     public double time = 0;
     public double indexTime = 1;
-    public double money = 0;
+    public int money = 0;
     public int[][] grid = new int[NBcases][NBcases];
     public Plan currentPlan = Plan.ACCUEIL;
 
@@ -56,7 +56,7 @@ public class HelloApplication extends Application {
 
                     if (time > indexTime * FPS) {
                         indexTime++;
-                        createRandomInfectedCell();
+                        Virus.createRandomInfectedCell(bgContext);
                     }
                 }
 
@@ -80,6 +80,10 @@ public class HelloApplication extends Application {
             }
         });
 
+        scene.setOnMousePressed(event -> {
+
+        });
+
         stage.setTitle("PlaceHolder");
         stage.setScene(scene);
         stage.show();
@@ -92,7 +96,7 @@ public class HelloApplication extends Application {
         currentPlan = plan;
         switch (currentPlan) {
             case ACCUEIL -> addAccueil();
-            case GAMEPLAY -> drawGrid();
+            case GAMEPLAY -> addGameplay();
         }
     }
 
@@ -112,8 +116,10 @@ public class HelloApplication extends Application {
     }
 
     public void addGameplay() {
+        GUIContext.setFill(Color.BLACK);
         GUIContext.setFont(Font.font(12));
-        GUIContext.fillText("money : "+money, 20, 20);
+        GUIContext.fillText("money : "+money+"$", 20, 20);
+        drawTools();
         drawGrid();
     }
 
@@ -124,12 +130,5 @@ public class HelloApplication extends Application {
                 bgContext.strokeRect(LENcases*x+ ORIGIN.getX(), LENcases*y+ ORIGIN.getY(), LENcases, LENcases);
             }
         }
-    }
-
-    public void createRandomInfectedCell() {
-        int randomIndexX = random.nextInt(NBcases/4, 3*NBcases/4);
-        int randomIndexY = random.nextInt(NBcases/4, 3*NBcases/4);
-        bgContext.setFill(Color.RED);
-        bgContext.fillRect(LENcases*randomIndexX+ORIGIN.getX(), LENcases*randomIndexY+ORIGIN.getY(), LENcases, LENcases);
     }
 }
