@@ -2,27 +2,46 @@ package com.example.demo;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import java.io.IOException;
 import javafx.scene.Parent;
 import javafx.fxml.FXMLLoader;
+import java.util.Random;
 
 public class HelloApplication extends Application {
     public static final double SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
     public static final double LEVEL_WIDTH = SCREEN_WIDTH, LEVEL_HEIGHT = SCREEN_HEIGHT;
+    public static final int NBcases = 20, LENcases = 20;
+    public static final Point2D ORIGIN = new Point2D(200, 100);
+    public static final double FPS = 1;
+    public static final double moneyGeneratorPerSecond = 3*FPS;
 
     public Pane pane = new Pane();
     public static Scene scene;
 
     public Canvas bgCanvas = new Canvas(LEVEL_WIDTH, LEVEL_HEIGHT);
     public GraphicsContext bgContext = bgCanvas.getGraphicsContext2D();
+    public Canvas GUICanvas = new Canvas(LEVEL_WIDTH, LEVEL_HEIGHT);
+    public GraphicsContext GUIContext = GUICanvas.getGraphicsContext2D();
+    public Random random = new Random();
+
+    public double time = 0;
+    public double indexTime = 1;
+    public double money = 0;
+    public int[][] grid = new int[NBcases][NBcases];
+    public Plan currentPlan = Plan.ACCUEIL;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -30,46 +49,102 @@ public class HelloApplication extends Application {
 
         scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
        // addAll();
+        loadNewScreen(currentPlan);
 
        /* AnimationTimer timer = new AnimationTimer() {
             long lastTime = System.nanoTime();
 
             @Override
             public void handle(long now) {
-                double deltaTemps = (now - lastTime) * 1e-9;
+                if (currentPlan == Plan.GAMEPLAY) {
+                    double deltaTemps = (now - lastTime) * 1e-9;
+                    time += deltaTemps;
+
+                    if (time > indexTime * FPS) {
+                        indexTime++;
+                        createRandomInfectedCell();
+                    }
+                }
+
                 lastTime = now;
             }
         };*/
-        //timer.start();
+        timer.start();
 
-        /*scene.setOnKeyPressed(e -> {
-            Input.setKeyPressed(e.getCode(), true);
-        });*/
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case ESCAPE -> {
+                    if (currentPlan == Plan.ACCUEIL) {
+                        Platform.exit();
+                        return;
+                    }
+                    loadNewScreen(Plan.ACCUEIL);
+                }
+                case P -> {
+                    //PAUSE LOGIC
+                }
+            }
+        });
 
-        /*scene.setOnKeyReleased(e -> {
-            Input.setKeyPressed(e.getCode(), false);
-        });*/
+        scene.setOnMousePressed(event -> {
+
+        });
 
         stage.setTitle("PlaceHolder");
         stage.setScene(scene);
         stage.show();
     }
 
-    /*public void addAll() {
+    public void loadNewScreen(Plan plan) {
+        pane.getChildren().clear();
         pane.getChildren().add(bgCanvas);
+        pane.getChildren().add(GUICanvas);
+        currentPlan = plan;
+        switch (currentPlan) {
+            case ACCUEIL -> addAccueil();
+            case GAMEPLAY -> drawGrid();
+        }
+    }
 
-        int[] origin = {200, 100};
-        for (int x = 0; x < 20; x++) {
-            for (int y = 0; y < 20; y++) {
+    public void addAccueil() {
+        VBox vBox = new VBox();
+
+        ImageView virus = new ImageView(new Image("virus.png"));
+        virus.setPreserveRatio(true);
+        virus.setFitHeight(50);
+        vBox.getChildren().add(virus);
+
+        Button btnPlay = new Button("Jouer !");
+        vBox.getChildren().add(btnPlay);
+        btnPlay.setOnAction(event -> {loadNewScreen(Plan.GAMEPLAY);});
+
+        pane.getChildren().add(vBox);
+    }
+
+    public void addGameplay() {
+        GUIContext.setFont(Font.font(12));
+        GUIContext.fillText("money : "+money, 20, 20);
+        drawGrid();
+    }
+
+    private void drawGrid() {
+        for (int y = 0; y < grid.length; y++) {
+            for (int x = 0; x < grid[y].length; x++) {
                 bgContext.setStroke(Color.BLACK);
-                bgContext.strokeRect(20*x+origin[0], 20*y+origin[1], 20, 20);
+                bgContext.strokeRect(LENcases*x+ ORIGIN.getX(), LENcases*y+ ORIGIN.getY(), LENcases, LENcases);
             }
         }
     }
-     */
 
     static void setRoot(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/fxml/" + fxml + ".fxml"));
         scene.setRoot(fxmlLoader.load());
+    }
+
+    public void createRandomInfectedCell() {
+        int randomIndexX = random.nextInt(NBcases/4, 3*NBcases/4);
+        int randomIndexY = random.nextInt(NBcases/4, 3*NBcases/4);
+        bgContext.setFill(Color.RED);
+        bgContext.fillRect(LENcases*randomIndexX+ORIGIN.getX(), LENcases*randomIndexY+ORIGIN.getY(), LENcases, LENcases);
     }
 }
