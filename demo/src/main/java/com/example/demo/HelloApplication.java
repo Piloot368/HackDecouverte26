@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -13,6 +14,19 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        addAll();
+
+        AnimationTimer timer = new AnimationTimer() {
+            long lastTime = System.nanoTime();
+
+            @Override
+            public void handle(long now) {
+                double deltaTemps = (now - lastTime) * 1e-9;
+
+                lastTime = now;
+            }
+        };
+        timer.start();
 
         scene.setOnKeyPressed(e -> {
             Input.setKeyPressed(e.getCode(), true);
@@ -25,5 +39,9 @@ public class HelloApplication extends Application {
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
+    }
+
+    public void addAll() {
+        
     }
 }
