@@ -5,6 +5,6 @@ import javafx.scene.image.Image;
 
 public class Firewall extends Tools {
     public Firewall() {
-        super(20, new Image("firewall.png"), new Image("firewall-icon.png"));
+        super(5, new Image("firewall.png"), new Image("firewall-icon.png"));
     }
 }

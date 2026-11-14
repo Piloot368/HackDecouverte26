@@ -3,6 +3,7 @@ package com.example.demo;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -24,13 +25,12 @@ import static com.example.demo.GameController.*;
 
 public class HelloApplication extends Application {
     public static final double SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
-    public static final double LEVEL_WIDTH = SCREEN_WIDTH, LEVEL_HEIGHT = SCREEN_HEIGHT;
 
     public Pane pane = new Pane();
     public Scene scene = new Scene(pane, SCREEN_WIDTH, SCREEN_HEIGHT);
-    public Canvas bgCanvas = new Canvas(LEVEL_WIDTH, LEVEL_HEIGHT);
+    public Canvas bgCanvas = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
     public GraphicsContext bgContext = bgCanvas.getGraphicsContext2D();
-    public Canvas GUICanvas = new Canvas(LEVEL_WIDTH, LEVEL_HEIGHT);
+    public Canvas GUICanvas = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
     public GraphicsContext GUIContext = GUICanvas.getGraphicsContext2D();
     public GameController controller = new GameController();
     public Random random = new Random();
@@ -54,6 +54,7 @@ public class HelloApplication extends Application {
 
                     if (time > indexTime * FPS) {
                         indexTime++;
+                        controller.nextTick();
                         loadGUI();
                         Virus.createRandomInfectedCell(bgContext);
                     }
@@ -80,7 +81,7 @@ public class HelloApplication extends Application {
         });
 
         scene.setOnMousePressed(event -> {
-
+            controller.verifyHitboxes(new Point2D(event.getX(), event.getY()));
         });
 
         stage.setTitle("PlaceHolder");
@@ -135,8 +136,11 @@ public class HelloApplication extends Application {
     }
 
     public void drawTools() {
-        for (int i = 0; i < controller.getTools().length; i++) {
-            GUIContext.drawImage(controller.getTools()[i].iconImage, 20, 60);
+        for (int i = 0; i < tools.length; i++) {
+            GUIContext.drawImage(tools[i].iconImage, SCREEN_WIDTH-80-20, 20+90*i);
+            GUIContext.setFill(Color.BLACK);
+            GUIContext.setFont(Font.font(12));
+            GUIContext.fillText(String.valueOf(tools[i].price)+"$", SCREEN_WIDTH-80-20, 110+90*i);
         }
     }
 }

@@ -16,7 +16,7 @@ public class Tools {
         this.iconImage = iconImage;
     }
 
-    public void draw(GraphicsContext context) {
-        //context.drawImage(image, position.getX(), position.getY());
+    public void draw(GraphicsContext context, Point2D position) {
+        context.drawImage(image, position.getX(), position.getY());
     }
 }

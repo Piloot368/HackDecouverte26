@@ -14,4 +14,12 @@ public enum caseType {
     public int getIndex() {
         return index;
     }
+
+    public static caseType get(Tools tool) {
+        if (tool instanceof Firewall) {
+            return FIREWALL;
+        } else {
+            return EMPTY;
+        }
+    }
 }
