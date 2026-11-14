@@ -2,6 +2,7 @@ package com.example.demo;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -12,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -23,15 +25,19 @@ public class HelloApplication extends Application {
     public static final int NBcases = 20, LENcases = 20;
     public static final Point2D ORIGIN = new Point2D(200, 100);
     public static final double FPS = 1;
+    public static final double moneyGeneratorPerSecond = 3*FPS;
 
     public Pane pane = new Pane();
     public Scene scene = new Scene(pane, SCREEN_WIDTH, SCREEN_HEIGHT);
     public Canvas bgCanvas = new Canvas(LEVEL_WIDTH, LEVEL_HEIGHT);
     public GraphicsContext bgContext = bgCanvas.getGraphicsContext2D();
+    public Canvas GUICanvas = new Canvas(LEVEL_WIDTH, LEVEL_HEIGHT);
+    public GraphicsContext GUIContext = GUICanvas.getGraphicsContext2D();
     public Random random = new Random();
 
     public double time = 0;
     public double indexTime = 1;
+    public double money = 0;
     public int[][] grid = new int[NBcases][NBcases];
     public Plan currentPlan = Plan.ACCUEIL;
 
@@ -59,6 +65,21 @@ public class HelloApplication extends Application {
         };
         timer.start();
 
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case ESCAPE -> {
+                    if (currentPlan == Plan.ACCUEIL) {
+                        Platform.exit();
+                        return;
+                    }
+                    loadNewScreen(Plan.ACCUEIL);
+                }
+                case P -> {
+                    //PAUSE LOGIC
+                }
+            }
+        });
+
         stage.setTitle("PlaceHolder");
         stage.setScene(scene);
         stage.show();
@@ -67,6 +88,7 @@ public class HelloApplication extends Application {
     public void loadNewScreen(Plan plan) {
         pane.getChildren().clear();
         pane.getChildren().add(bgCanvas);
+        pane.getChildren().add(GUICanvas);
         currentPlan = plan;
         switch (currentPlan) {
             case ACCUEIL -> addAccueil();
@@ -87,6 +109,12 @@ public class HelloApplication extends Application {
         btnPlay.setOnAction(event -> {loadNewScreen(Plan.GAMEPLAY);});
 
         pane.getChildren().add(vBox);
+    }
+
+    public void addGameplay() {
+        GUIContext.setFont(Font.font(12));
+        GUIContext.fillText("money : "+money, 20, 20);
+        drawGrid();
     }
 
     private void drawGrid() {
