@@ -54,6 +54,7 @@ public class HelloApplication extends Application {
 
                     if (time > indexTime * FPS) {
                         indexTime++;
+                        controller.drawGrid(bgContext);
                         controller.nextTick(bgContext);
                         loadGUI();
                     }

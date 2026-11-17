@@ -14,6 +14,10 @@ public class Virus {
     private static Random random = new Random();
     private int buffer = 4;
 
+    public void printPos() {
+        System.out.println("x : "+pos.getX()+",y : "+pos.getY());
+    }
+
     public Virus(Point2D pos) {
         this.pos = pos;
     }

@@ -12,12 +12,13 @@ import static com.example.demo.HelloApplication.SCREEN_WIDTH;
 public class GameController {
     public static final int NBcases = 20, LENcases = 20;
     public static final Point2D ORIGIN = new Point2D(200, 100);
-    public static final double FPS = 1;
-    public static final double moneyGeneratorPerSecond = 3*FPS;
+    public static final double FPS = 1.0/60.0;
+    public static final double moneyGeneratorPerSecond = 3.0*FPS;
+    public static final int PERCENTAGE_OF_PROPAGATION = 2000+1;
     public static Tools[] tools = {new Firewall()};
     public Random random = new Random();
 
-    public int money = 0;
+    public double money = 0;
     public int[][] grid = new int[NBcases][NBcases];
     public caseType picking = caseType.EMPTY;
     public ArrayList<Virus> enemies = new ArrayList<>();
@@ -25,7 +26,7 @@ public class GameController {
     public int nbEnemies = 0;
 
     public int getMoney() {
-        return money;
+        return (int) money;
     }
 
     public void nextTick(GraphicsContext context) {
@@ -41,6 +42,7 @@ public class GameController {
             nbEnemies++;
             createRandomInfectedCell(context);
         }
+        enemies.getFirst().printPos();
     }
 
     public void drawGrid(GraphicsContext context) {
@@ -97,12 +99,12 @@ public class GameController {
 
         for (int i = 0; i < yVoisin.length; i++) {
             if ((int) (position.getY()+yVoisin[i]) >= 0 && (int) (position.getY()+yVoisin[i]) < NBcases && (int) (position.getX()+xVoisin[i]) >= 0 && (int) (position.getX()+xVoisin[i]) < NBcases) {
-                if (grid[(int) (position.getY() + yVoisin[i])][(int) (position.getX() + xVoisin[i])] != caseType.BOURGEON.getIndex()) {
-                    boolean progate = random.nextInt(1, 11) == 1;
+                if (grid[(int) (position.getY() + yVoisin[i])][(int) (position.getX() + xVoisin[i])] == caseType.EMPTY.getIndex()) {
+                    boolean progate = random.nextInt(1, PERCENTAGE_OF_PROPAGATION) == 1;
                     if (progate) {
                         grid[(int) (position.getY() + yVoisin[i])][(int) (position.getX() + xVoisin[i])] = caseType.BOURGEON.getIndex();
                     }
-                } else {
+                } else if (grid[(int) (position.getY() + yVoisin[i])][(int) (position.getX() + xVoisin[i])] == caseType.BOURGEON.getIndex()) {
                     grid[(int) (position.getY() + yVoisin[i])][(int) (position.getX() + xVoisin[i])] = caseType.ESTABLISHED.getIndex();
                 }
             }
