@@ -5,12 +5,20 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Light;
 import javafx.scene.image.Image;
 
+import static com.example.demo.GameController.LENcases;
+
 public class Tools {
-    public Point2D position;
     public int price;
     public Image image;
+    public Image iconImage;
 
-    public void draw(GraphicsContext context) {
-        context.drawImage(image, position.getX(), position.getY());
+    public Tools(int price, Image image, Image iconImage) {
+        this.price = price;
+        this.image = image;
+        this.iconImage = iconImage;
+    }
+
+    public void draw(GraphicsContext context, Point2D position) {
+        context.drawImage(image, position.getX(), position.getY(), LENcases, LENcases);
     }
 }

@@ -4,12 +4,14 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -19,26 +21,22 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Random;
 
+import static com.example.demo.GameController.*;
+
 public class HelloApplication extends Application {
     public static final double SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
-    public static final double LEVEL_WIDTH = SCREEN_WIDTH, LEVEL_HEIGHT = SCREEN_HEIGHT;
-    public static final int NBcases = 20, LENcases = 20;
-    public static final Point2D ORIGIN = new Point2D(200, 100);
-    public static final double FPS = 1;
-    public static final double moneyGeneratorPerSecond = 3*FPS;
 
     public Pane pane = new Pane();
     public Scene scene = new Scene(pane, SCREEN_WIDTH, SCREEN_HEIGHT);
-    public Canvas bgCanvas = new Canvas(LEVEL_WIDTH, LEVEL_HEIGHT);
+    public Canvas bgCanvas = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
     public GraphicsContext bgContext = bgCanvas.getGraphicsContext2D();
-    public Canvas GUICanvas = new Canvas(LEVEL_WIDTH, LEVEL_HEIGHT);
+    public Canvas GUICanvas = new Canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
     public GraphicsContext GUIContext = GUICanvas.getGraphicsContext2D();
+    public GameController controller = new GameController();
     public Random random = new Random();
 
     public double time = 0;
     public double indexTime = 1;
-    public double money = 0;
-    public int[][] grid = new int[NBcases][NBcases];
     public Plan currentPlan = Plan.ACCUEIL;
 
     @Override
@@ -56,7 +54,9 @@ public class HelloApplication extends Application {
 
                     if (time > indexTime * FPS) {
                         indexTime++;
-                        createRandomInfectedCell();
+                        controller.drawGrid(bgContext);
+                        controller.nextTick(bgContext);
+                        loadGUI();
                     }
                 }
 
@@ -80,6 +80,10 @@ public class HelloApplication extends Application {
             }
         });
 
+        scene.setOnMousePressed(event -> {
+            controller.verifyHitboxes(new Point2D(event.getX(), event.getY()), bgContext);
+        });
+
         stage.setTitle("PlaceHolder");
         stage.setScene(scene);
         stage.show();
@@ -92,44 +96,51 @@ public class HelloApplication extends Application {
         currentPlan = plan;
         switch (currentPlan) {
             case ACCUEIL -> addAccueil();
-            case GAMEPLAY -> drawGrid();
+            case GAMEPLAY -> addGameplay();
         }
     }
 
     public void addAccueil() {
-        VBox vBox = new VBox();
+        HBox hBox = new HBox();
+        hBox.setPrefSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+        hBox.setAlignment(Pos.CENTER);
+            VBox vBox = new VBox(15);
+            vBox.setPrefSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+            vBox.setAlignment(Pos.CENTER);
 
-        ImageView virus = new ImageView(new Image("virus.png"));
-        virus.setPreserveRatio(true);
-        virus.setFitHeight(50);
-        vBox.getChildren().add(virus);
+            ImageView virus = new ImageView(new Image("virus.png"));
+            virus.setPreserveRatio(true);
+            virus.setFitHeight(200);
+            vBox.getChildren().add(virus);
 
-        Button btnPlay = new Button("Jouer !");
-        vBox.getChildren().add(btnPlay);
-        btnPlay.setOnAction(event -> {loadNewScreen(Plan.GAMEPLAY);});
+            Button btnPlay = new Button("Jouer !");
+            vBox.getChildren().add(btnPlay);
+            btnPlay.setOnAction(event -> {loadNewScreen(Plan.GAMEPLAY);});
 
-        pane.getChildren().add(vBox);
+        hBox.getChildren().add(vBox);
+        pane.getChildren().add(hBox);
     }
 
     public void addGameplay() {
+        controller.drawGrid(bgContext);
+        loadGUI();
+    }
+
+    public void loadGUI() {
+        GUIContext.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        GUIContext.setFill(Color.BLACK);
         GUIContext.setFont(Font.font(12));
-        GUIContext.fillText("money : "+money, 20, 20);
-        drawGrid();
+        GUIContext.fillText("money : "+controller.getMoney()+"$", 20, 20);
+        drawTools();
     }
 
-    private void drawGrid() {
-        for (int y = 0; y < grid.length; y++) {
-            for (int x = 0; x < grid[y].length; x++) {
-                bgContext.setStroke(Color.BLACK);
-                bgContext.strokeRect(LENcases*x+ ORIGIN.getX(), LENcases*y+ ORIGIN.getY(), LENcases, LENcases);
-            }
+    public void drawTools() {
+        for (int i = 0; i < tools.length; i++) {
+            GUIContext.drawImage(tools[i].iconImage, SCREEN_WIDTH-80-20, 20+90*i);
+            GUIContext.setFill(Color.BLACK);
+            GUIContext.setFont(Font.font(12));
+            GUIContext.fillText(String.valueOf(tools[i].price)+"$", SCREEN_WIDTH-80-20, 110+90*i);
         }
-    }
-
-    public void createRandomInfectedCell() {
-        int randomIndexX = random.nextInt(NBcases/4, 3*NBcases/4);
-        int randomIndexY = random.nextInt(NBcases/4, 3*NBcases/4);
-        bgContext.setFill(Color.RED);
-        bgContext.fillRect(LENcases*randomIndexX+ORIGIN.getX(), LENcases*randomIndexY+ORIGIN.getY(), LENcases, LENcases);
     }
 }
