@@ -1,6 +1,7 @@
 plugins {
     java
     application
+    id("org.jetbrains.kotlin.jvm") version "2.1.20"
     id("org.javamodularity.moduleplugin") version "1.8.15"
     id("org.openjfx.javafxplugin") version "0.0.13"
     id("org.beryx.jlink") version "2.25.0"
@@ -19,6 +20,10 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(23)
     }
+}
+
+kotlin {
+    jvmToolchain(23)
 }
 
 tasks.withType<JavaCompile> {
@@ -50,4 +55,10 @@ jlink {
     launcher {
         name = "app"
     }
+}
+
+tasks.register<JavaExec>("runKotlin") {
+    dependsOn("run")
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.example.kotlinfx_gralde.HelloApplication")
 }
